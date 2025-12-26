@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login.dto';
+import { User } from 'src/users/entities/user.entity';
 
 
 @Injectable()
@@ -29,6 +30,26 @@ export class AuthService {
        if (!user || !(await bcrypt.compare(loginDTO.password, user.password))) {
            throw new UnauthorizedException('Invalid credentials');
        }
+       // eslint-disable-next-line prettier/prettier
        return this.jwtService.sign({id: user.id, email: user.email});
+    }
+
+
+    async loginWithGoogle(userData:User){
+          let user =await this.usersService.findUserByEmail(userData.email);
+        if(!user){
+             user=await this.usersService.createUser(userData);
+        }
+
+        return this.jwtService.sign({id : user.id , email: user.email})
+    }
+
+    async loginWithGithub(userData:User){
+          let user =await this.usersService.findUserByEmail(userData.email);
+        if(!user){
+             user=await this.usersService.createUser(userData);
+        }
+
+        return this.jwtService.sign({id : user.id , email: user.email})
     }
 }

@@ -1,23 +1,29 @@
-
 version: '3.8'
+
 services:
   postgres:
-    image: postgres:14
-    container_name: postgres
+    image: postgres:16
+    container_name: pomodoro-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pomodoro_prod
+      POSTGRES_USER: postgres           # ← superuser name
+      POSTGRES_PASSWORD: postgres       # ← required!
+      POSTGRES_DB: pomodoro_prod        # ← initial database name
     ports:
-      - "5432:5432"
+      - "5433:5432"                     # host:5433 → container:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 8
     networks:
       - nest-net
 
-
 networks:
   nest-net:
+    driver: bridge
 
 volumes:
   pgdata:

@@ -5,6 +5,8 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
+import { GithubStrategy } from './github.stratergy';
+import { GoogleStrategy } from './google.stratergy';
 
 @Module({
   imports: [
@@ -15,14 +17,24 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     JwtModule.registerAsync({
     imports: [ConfigModule],
-    useFactory: async (config: ConfigService) => ({
-      secret: config.get<string>('JWT_SECRET'),
-      signOptions: { expiresIn: config.get<string>('JWT_EXPIRATION') }, // Token expiration time
-    }),
+   useFactory: (config: ConfigService) => {
+  const secret = config.get<string>('JWT_SECRET');
+  
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in environment!');
+  }
+
+  return {
+    secret,   // ← this is the correct key name
+    signOptions: {
+        expiresIn: parseInt(config.get<string>('JWT_EXPIRATION_SECONDS', '3600'), 10),    
+      },
+  };
+},
     inject: [ConfigService]
    })
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy]
+  providers: [AuthService, JwtStrategy,GithubStrategy, GoogleStrategy]
 })
 export class AuthModule {}

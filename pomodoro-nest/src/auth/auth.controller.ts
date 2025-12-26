@@ -9,7 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
     constructor(
         private authService: AuthService,
-        private userServce: UsersService
+        private userService: UsersService
 
     ) {}
 
@@ -43,7 +43,7 @@ export class AuthController {
     async profile(
         @Req() req: any
     ): Promise<{email: string}> {
-        const user =  await this.userServce.findUserByEmail(req.user.email);
+        const user =  await this.userService.findUserByEmail(req.user.email);
         if (!user) {
             throw new Error('User not found');
         }
@@ -57,4 +57,21 @@ export class AuthController {
         res.clearCookie('access_token'); // Clear the cookie
         return {message: 'Logout successful, cookie cleared'};
     }
+
+
+    @Get('google')
+    @UseGuards(AuthGuard('google'))
+    googleLogin() {
+    // This route does almost nothing — Guard redirects to Google
+    }
+
+    @Get('google/callback')
+    @UseGuards(AuthGuard('google'))
+    googleRedirect(@Req() req) {
+     // Passport already validated → user data in req.user
+     // Now you create/issue your own JWT
+     const user = req.user;
+
+       this.authService.loginWithGoogle(user);
+     }
 }
