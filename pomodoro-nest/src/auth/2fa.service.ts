@@ -18,7 +18,8 @@ export class twoFAService {
             name: `PomodoroApp(${id})`,
             length: 20,
         });
-
+        console.log("secret", secret);
+        
         await this.saveTwoFactorSecret(id, secret.base32);
 
         const otpauthUrl = secret.otpauth_url;
@@ -44,7 +45,7 @@ export class twoFAService {
 
         const isValid = speakeasy.totp.verify({
             secret: userSecret,
-            encodeURIng: 'base32',
+            encoding: 'base32',
             token: code,
             window: 1, // Allow a 1-step window (30 seconds before or after)
         });

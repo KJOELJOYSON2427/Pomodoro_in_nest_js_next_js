@@ -21,10 +21,10 @@ export class User {
 
 
     @Column({ default: false })
-  isTwoFactorEnabled: boolean;
+     isTwoFactorEnabled: boolean;
 
     @Column({ nullable: true })
-    twoFactorSecret: string | null;
+    twoFactorSecret: string;
 
     @Column({default: false})
     isTwoFactorVerified: boolean;

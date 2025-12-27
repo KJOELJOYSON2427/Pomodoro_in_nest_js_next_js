@@ -134,6 +134,8 @@ export class AuthController {
     @Post('/2fa/generate')
     @UseGuards(AuthGuard('jwt'))
     generate2FA(@Req() req) {
+        console.log("userId:", req.user.id);
+        
     return this.twoFaService.generateTwoFactorSecret(req.user.id);
   }
 
@@ -142,6 +144,9 @@ export class AuthController {
   async verify2FA(@Req() req, @Body('code') code: string):Promise<{
     message: string;
 }> {
+    console.log("code=", code);
+    console.log("user=", req.user);
+    
      await this.authService.verifyTwoFactorCode(req.user, code);
 
        return {

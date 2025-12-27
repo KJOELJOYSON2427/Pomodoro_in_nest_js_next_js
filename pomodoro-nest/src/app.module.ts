@@ -29,7 +29,7 @@ import { UsersModule } from './users/users.module';
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_DATABASE'),
           autoLoadEntities: true,
-          synchronize: true, // Set to false in production
+  synchronize: true, // dev only
         };
       },
       inject: [ConfigService]

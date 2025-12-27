@@ -79,11 +79,14 @@ export class AuthService {
         if (!user || !user.twoFactorSecret) {
             throw new BadRequestException('2FA not initiated');
         }
-
+        
+        console.log("user.twoFactorSecret:", user.twoFactorSecret);
         const isValid = await this.twoFAService.verifyTwoFactorCode(
             user.twoFactorSecret,
             code,
         );
+        console.log("isValid", isValid);
+        
 
         if (!isValid) {
             throw new BadRequestException('Invalid 2FA code');
