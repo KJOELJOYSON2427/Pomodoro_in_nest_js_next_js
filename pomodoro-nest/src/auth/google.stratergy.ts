@@ -1,5 +1,5 @@
 // src/auth/google.strategy.ts
-import { Strategy } from 'passport-google-oauth20';
+import { Strategy ,Profile} from 'passport-github';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategy extends PassportStrategy(Strategy, 'github') {
 
     constructor(private userService: UsersService,
         private configService: ConfigService
@@ -21,8 +21,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
 
-    async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
-        // profile = Google user data {id, emails, name, photos, ...}
+    async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
+        // profile = Github user data {id, emails, name, photos, ...}
         const { emails, displayName } = profile;
 
         const user = {
@@ -31,8 +31,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             firstName: displayName.split(" ")[0],
             lastName: displayName.split(" ")[1]
         }
-
-      
 
             return user;
     }

@@ -12,6 +12,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'google') {
     constructor(private userService: UsersService,
         private configService: ConfigService
     ) {
+        console.log(configService.get('GITHUB_CLIENT_ID'));
         super({
             clientID: configService.get('GITHUB_CLIENT_ID') || process.env.GITHUB_CLIENT_ID,
             clientSecret: configService.get('GITHUB_CLIENT_SECRET') || process.env.GITHUB_CLIENT_SECRET,
