@@ -1,16 +1,17 @@
-import { Body, Controller, Post, Req, UseGuards, Get, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get, Res, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDTO } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthGuard } from '@nestjs/passport';
+import { twoFAService } from './2fa.service';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private authService: AuthService,
-        private userService: UsersService
-
+        private userService: UsersService,
+        private twoFaService: twoFAService
     ) { }
 
     @Post('register')
@@ -25,10 +26,20 @@ export class AuthController {
     async login(
         @Body() loginDTO: LoginDTO,
         @Res({ passthrough: true }) res: any
-    ): Promise<{ message: string }> {
-        const token = await this.authService.login(loginDTO);
+    ): Promise<{ message: string; twoFactorRequired?: boolean; userId?: number }> {
+        const result = await this.authService.login(loginDTO);
+
+
+        // 🔐 2FA ENABLED → STOP HERE
+  if (result.twoFactorRequired) {
+    return {
+      twoFactorRequired: true,
+      userId: result.userId,
+      message: 'Two-factor authentication required',
+    };
+  }
         // return { token }; // Return the generated JWT token
-        res.cookie('access_token', token, {
+        res.cookie('access_token', result.token, {
             httpOnly: true,
             sameSite: 'lax', // Use 'lax' for CSRF protection
             secure: process.env.NODE_ENV === 'production', // Set to true in production
@@ -118,4 +129,33 @@ export class AuthController {
         });
         return res.redirect('http://localhost:3000/dashboard');
     }
+
+
+    @Post('/2fa/generate')
+    @UseGuards(AuthGuard('jwt'))
+    generate2FA(@Req() req) {
+    return this.twoFaService.generateTwoFactorSecret(req.user.id);
+  }
+
+  @Post('/2fa/verify')
+  @UseGuards(AuthGuard('jwt'))
+  async verify2FA(@Req() req, @Body('code') code: string):Promise<{
+    message: string;
+}> {
+     await this.authService.verifyTwoFactorCode(req.user, code);
+
+       return {
+    message: 'OTP verified successfully',
+  };
+}
+
+
+@Post('/2fa/enable')
+@UseGuards(AuthGuard('jwt'))
+async enable2FA(@Req() req) :Promise<{
+    message: string;
+}>{
+  return this.authService.enableTwoFactor(req.user.email);
+}
+
 }

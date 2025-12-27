@@ -17,4 +17,15 @@ export class User {
 
     @Column()
     lastName: string;
+
+
+
+    @Column({ default: false })
+  isTwoFactorEnabled: boolean;
+
+    @Column({ nullable: true })
+    twoFactorSecret: string | null;
+
+    @Column({default: false})
+    isTwoFactorVerified: boolean;
 }
