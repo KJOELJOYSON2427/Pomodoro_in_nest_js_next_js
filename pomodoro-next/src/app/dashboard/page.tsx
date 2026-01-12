@@ -9,9 +9,12 @@ export default async function DashboarPage() {
     .join("; ");
 
   if (!cookieHeader.includes("access_token=")) {
+    console.log("came here 1");
+    
     redirect("/login");
   }
-
+  console.log(cookieHeader, "cookie valies");
+    console.log(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`);
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
     headers: {
       Cookie: cookieHeader,
@@ -21,6 +24,8 @@ export default async function DashboarPage() {
   });
 
   if (!res.ok) {
+        console.log("came here 2");
+
     redirect("/login");
   }
 

@@ -10,6 +10,7 @@ import { twoFAService } from './2fa.service';
 
 @Injectable()
 export class AuthService {
+   
 
 
     constructor(private readonly usersService: UsersService,
@@ -119,6 +120,17 @@ export class AuthService {
         return {
             message: 'Two-factor authentication enabled',
         };
+    }
+
+     async generateJwt(user: User) {
+        const token = this.jwtService.sign({
+            sub: user.id,
+            email: user.email,
+        });
+
+        return {
+            token,
+        }
     }
 
 }

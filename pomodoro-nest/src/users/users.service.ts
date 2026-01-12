@@ -66,4 +66,13 @@ export class UsersService {
         user.isTwoFactorVerified = updateData.isTwoFactorVerified;
         return await this.userRepository.save(user);
     }
+
+
+    async findUserById(id: number) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
+    }
 }

@@ -8,6 +8,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { GithubStrategy } from './github.stratergy';
 import { GoogleStrategy } from './google.stratergy';
 import {  twoFAService } from './2fa.service';
+import { VerifyingOtpIsEnabledGuard } from './verifying-otp-is-enabled/verifying-otp-is-enabled.guard';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ import {  twoFAService } from './2fa.service';
    })
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy,GithubStrategy, GoogleStrategy, twoFAService]
+  providers: [AuthService, JwtStrategy,GithubStrategy, GoogleStrategy, twoFAService, VerifyingOtpIsEnabledGuard]
 })
 export class AuthModule {}

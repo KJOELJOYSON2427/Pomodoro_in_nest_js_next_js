@@ -5,6 +5,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { ChatModule } from './chat/chat.module';
+import { RedisModule } from './redis/redis.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -35,8 +39,10 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService]
     }),
     AuthModule,
-    UsersModule],
+    UsersModule,
+    ChatModule,
+    RedisModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

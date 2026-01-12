@@ -27,7 +27,7 @@ export const loginUser = async (data: LoginInput) => {
       body: JSON.stringify(data),
     }
   );
-  return response.json();
+  return response;
 };
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
@@ -58,3 +58,26 @@ export const logoutUser = async () => {
   );
   return response.json();
 };
+
+
+
+export const verifyOTP = async (otp: string)=>{
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/2fa/verify/enable`, {
+        method: "POST",
+        credentials: "include",           // ← very important!
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: otp.trim() }),
+      });
+
+      const data = await res.json();
+
+      console.log(data, "came");
+      
+
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid or expired code");
+      }
+      return data;
+}
