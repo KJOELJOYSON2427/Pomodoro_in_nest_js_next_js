@@ -5,10 +5,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { ChatModule } from './chat/chat.module';
 import { RedisModule } from './redis/redis.module';
 import { ChatGateway } from './chat/chat.gateway';
-import { ChatModule } from './chat/chat.module';
+import { LlmService } from './llm/llm.service';
 
 @Module({
   imports: [
@@ -40,9 +39,8 @@ import { ChatModule } from './chat/chat.module';
     }),
     AuthModule,
     UsersModule,
-    ChatModule,
     RedisModule],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, LlmService],
 })
 export class AppModule {}
