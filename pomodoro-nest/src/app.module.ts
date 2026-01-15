@@ -8,6 +8,9 @@ import { UsersModule } from './users/users.module';
 import { RedisModule } from './redis/redis.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { LlmService } from './llm/llm.service';
+import { ChatService } from './chat/chat.service';
+import { Chat } from './chat/entities/chat.entity';
+import { Message } from './chat/entities/message.entity';
 
 @Module({
   imports: [
@@ -15,8 +18,9 @@ import { LlmService } from './llm/llm.service';
       isGlobal: true, // Makes the configuration available globally
       envFilePath: '.env', // Path to your .env file
     }),
+    TypeOrmModule.forFeature([Chat, Message]),
     TypeOrmModule.forRootAsync({
-      imports : [ConfigModule],
+      imports : [ConfigModule,],
       useFactory: async (config: ConfigService) => {
         // console.log('Database configuration:', {
         //   host: config.get<string>('DB_HOST'),
@@ -41,6 +45,7 @@ import { LlmService } from './llm/llm.service';
     UsersModule,
     RedisModule],
   controllers: [AppController],
-  providers: [AppService, ChatGateway, LlmService],
+  providers: [AppService, ChatGateway, LlmService, ChatService,
+    ],
 })
 export class AppModule {}

@@ -86,5 +86,43 @@ const session = val ? JSON.parse(val) : {};
     payload: { chatId: number; content: string },
   ) {
     const user = client.data.user;
+
+    // Save user message (DB)
+    const userMessage = await this.chatService.saveUserMessage(
+      user.id,
+      payload.chatId,
+      payload.content,
+    );
+
+
+    // Notify UI
+    client.emit("message_ack", {
+      messageId: userMessage.id,
+    });
+
+
+    // Start streaming assistant response
+    this.chatService.streamAssistantResponse({
+      chatId: payload.chatId,
+      userId: user.id,
+      server: this.server,
+    });
   }
+ 
+
+  // -------------------------------
+  // 5️⃣ STOP GENERATION
+  // -------------------------------
+  @SubscribeMessage("stop_generation")
+  async handleStopGeneration(
+    client: Socket,
+    payload: { messageId: number },
+  ) {
+    await this.chatService.stopStreaming(payload.messageId);
+
+    client.emit("generation_stopped", {
+      messageId: payload.messageId,
+    });
+  }
+
 }

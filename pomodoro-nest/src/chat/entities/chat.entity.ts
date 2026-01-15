@@ -6,10 +6,12 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 import { Message } from "./message.entity";
 
+@Index(["user", "updatedAt"])
 @Entity()
 export class Chat {
 
@@ -25,7 +27,7 @@ export class Chat {
   title: string;
 
   // Model used (future-proof)
-  @Column({ default: "gpt-4" })
+  @Column({ default: "grok" })
   model: string;
   
   // Messages inside this chat
@@ -37,4 +39,6 @@ export class Chat {
 
   @UpdateDateColumn()
   updatedAt: Date;
+   @Column({ default:false })
+  isDeleted:boolean;
 }

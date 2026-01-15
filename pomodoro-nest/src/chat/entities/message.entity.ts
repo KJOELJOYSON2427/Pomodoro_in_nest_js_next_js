@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  Index,
 } from "typeorm";
 import { Chat } from "./chat.entity";
 
@@ -16,6 +17,7 @@ export enum MessageRole {
 }
 
 @Entity()
+@Index(["chat", "id"])
 export class Message {
 
   @PrimaryGeneratedColumn()

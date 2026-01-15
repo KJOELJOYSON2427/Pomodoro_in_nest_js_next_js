@@ -9,6 +9,7 @@ export class LlmService {
 
     async *streamChatCompletion(
     messages: CoreMessage[],
+    signal?: AbortSignal,
   ): AsyncGenerator<string>{
  
 
@@ -16,6 +17,7 @@ export class LlmService {
       model: groq("llama3-8b-8192"), // FREE & FAST
       messages,
       temperature: 0.7,
+       abortSignal: signal,
     });
 
      for await (const delta of result.textStream) {
